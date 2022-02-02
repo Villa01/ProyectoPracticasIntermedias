@@ -1,0 +1,27 @@
+version: "3"
+services:
+    web:
+        container_name: appmongo
+        restart: always
+        build: ./server
+        ports:
+            - '5000:5000'
+        links:
+            - mongo
+            - react-app
+        volumes:
+            - ./server:/usr/src/app
+    mongo:
+        container_name: mongoadatabase
+        image: mongo:latest
+        ports:
+            - '27018:27017'
+        logging:
+            driver: none
+    react-app:
+        image: mern-app
+        stdin_open: true
+        ports:
+            - '3000:3000'
+        volumes:
+            - ./client/src:/usr/src/app/client
