@@ -2,26 +2,15 @@ import React, { useEffect, useReducer } from 'react';
 import { toDoReducer } from './toDoReducer';
 import { ToDoList } from './ToDoList';
 import { AddToDoForm } from './AddToDoForm';
-import request from 'superagent';
 import './styles.css';
 
 
-// const initialState = [
-//     {
-//         id: new Date().getTime(),
-//         desc: 'aprender React',
-//         done: false
-//     }
-// ];
 
 const baseUrl = 'http://localhost:5000';
 
 
-const init = () => {
-    // const todos = JSON.parse( localStorage.getItem('toDos') );
-    // return todos ? todos : [];
+const init = async () => {
     return [];
-
 }
 
 
@@ -30,48 +19,85 @@ export const TodoApp = () => {
 
     const [toDos, dispatch] = useReducer(toDoReducer, [], init);
 
-    useEffect(() => {
+    useEffect(async() => {
 
-        async function fetchToDos() {
-            const response = await fetch(`${baseUrl}/getToDos`)
-            response = await response.json();
-            
-            response.forEach(newToDo => {
-                dispatch({
-                    type: 'add',
-                    payload: newToDo
-                });
-            });
-        }
+        await fetch(`${baseUrl}/getToDos`)
+        .then(res => {
+            console.log(res);
+            return res.json();
+        })
+        .then(toDos => {
+            console.log(toDos);
+            dispatch({
+                type: 'add',
+                payload: toDos
+            })
+        }).catch(err => console.error)
 
-        fetchToDos();
-
-    }, [toDos])
+    }, [])
 
     const handleDelete = (toDoId) => {
 
-        const action = {
-            type: 'delete',
-            payload: toDoId
-        }
+        fetch(`${baseUrl}/deleteToDo`, {
+            method: 'DELETE',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ toDoId }),
+        }).then(resp => {
+            return resp.json();
+        }).then(() => {
+            const action = {
+                type: 'delete',
+                payload: toDoId
+            }
 
-        dispatch(action);
-    }
-
-    const handleAddToDo = newToDo => {
-        dispatch({
-            type: 'add',
-            payload: newToDo
+            dispatch(action);
+        }).catch(err => {
+            console.log(err);
         });
 
     }
 
+    const handleAddToDo = async newToDo => {
+        await fetch(`${baseUrl}/addToDo`, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(newToDo),
+        }).then(resp => {
+            console.log(resp);
+        }).then(() => {
+            dispatch({
+                type: 'add',
+                payload: newToDo
+            });
+            alert('Tarea agregada correctamente');
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
 
     const handleToggle = toDoId => {
-        dispatch({
-            type: 'toggle',
-            payload: toDoId
-        })
+
+        fetch(`${baseUrl}/updateToDo`, {
+            method: 'PUT',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ toDoId }),
+        }).then(resp => {
+            return resp.json();
+        }).then(() => {
+            dispatch({
+                type: 'toggle',
+                payload: toDoId
+            });
+        }).catch(err => {
+            console.log(err);
+        });
 
     }
 
@@ -90,7 +116,7 @@ export const TodoApp = () => {
                 </div>
                 <div className='col'>
                     <AddToDoForm
-                        handleAddToDo = { handleAddToDo }
+                        handleAddToDo={handleAddToDo}
                     />
                 </div>
             </div>
