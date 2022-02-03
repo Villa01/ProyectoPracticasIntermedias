@@ -53,18 +53,21 @@ app.post('/addToDo', (req, res) => {
   console.log('Agregando tarea');
   console.log(req.body);
   res.status(201);
+  res.send({ok:true});
 });
 
 app.delete('/deleteToDo', (req, res )=> {
   console.log(req.body);
   console.log('Eliminando tarea');
   res.status(200);
+  res.send({ok:true});
 })
 
 app.put('/updateToDo', (req, res ) => {
   console.log('Actualizando tarea');
   console.log(req.body);
   res.status(200);
+  res.send({ok:true});
 })
 
 app.listen(5000);

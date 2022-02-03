@@ -10,31 +10,42 @@ const baseUrl = 'http://localhost:5000';
 
 
 const init = async () => {
-    return [];
+    const data = await fetch(`${baseUrl}/getToDos`)
+    .then( resp => {
+        return resp.json();
+    })
+    .then( toDos => {
+        return toDos;
+    }).catch( console.err );
+
+    return data;
 }
 
 
 export const TodoApp = () => {
     // const [ toDos, dispatch ] = useReducer(toDoReducer, initialState);
 
-    const [toDos, dispatch] = useReducer(toDoReducer, [], init);
+    const [toDos, dispatch] = useReducer(toDoReducer, []);
 
-    useEffect(async() => {
+    useEffect(() => {
 
-        await fetch(`${baseUrl}/getToDos`)
-        .then(res => {
-            console.log(res);
-            return res.json();
-        })
-        .then(toDos => {
-            console.log(toDos);
-            dispatch({
-                type: 'add',
-                payload: toDos
-            })
-        }).catch(err => console.error)
+        function fetchToDos() {
+            fetch(`${baseUrl}/getToDos`)
+            .then( resp => {
+                return resp.json();
+            }).then( toDos => {
+                toDos.forEach(newToDo => {
+                    dispatch({
+                        type: 'add',
+                        payload: newToDo
+                    });
+                });
+            });        
+        }
 
-    }, [])
+        fetchToDos();
+
+    }, []);
 
     const handleDelete = (toDoId) => {
 
@@ -67,8 +78,6 @@ export const TodoApp = () => {
             },
             body: JSON.stringify(newToDo),
         }).then(resp => {
-            console.log(resp);
-        }).then(() => {
             dispatch({
                 type: 'add',
                 payload: newToDo
