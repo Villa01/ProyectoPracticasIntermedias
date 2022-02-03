@@ -8,20 +8,6 @@ import './styles.css';
 
 const baseUrl = 'http://localhost:5000';
 
-
-const init = async () => {
-    const data = await fetch(`${baseUrl}/getToDos`)
-    .then( resp => {
-        return resp.json();
-    })
-    .then( toDos => {
-        return toDos;
-    }).catch( console.err );
-
-    return data;
-}
-
-
 export const TodoApp = () => {
     // const [ toDos, dispatch ] = useReducer(toDoReducer, initialState);
 

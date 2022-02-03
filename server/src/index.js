@@ -137,14 +137,7 @@ app.put('/updateToDo', (req, res) => {
   ).then(result => { res.json('Updated') })
       .catch(error => console.error(error))
 });
-/*app.put('/updateToDo', (req, res) => {
 
-
-  console.log('Actualizando tarea');
-  console.log(req.body);
-  res.status(200);
-  res.send({ ok: true });
-})*/
 
 app.listen(5000);
 console.log('server oks');
