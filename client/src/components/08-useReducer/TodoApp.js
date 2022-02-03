@@ -89,20 +89,20 @@ export const TodoApp = () => {
     }
 
 
-    const handleToggle = toDoId => {
+    const handleToggle =  toDo => {
 
         fetch(`${baseUrl}/updateToDo`, {
             method: 'PUT',
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ toDoId }),
+            body: JSON.stringify(toDo),
         }).then(resp => {
             return resp.json();
         }).then(() => {
             dispatch({
                 type: 'toggle',
-                payload: toDoId
+                payload: toDo.id
             });
         }).catch(err => {
             console.log(err);
